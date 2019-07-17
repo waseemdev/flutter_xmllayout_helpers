@@ -7,10 +7,10 @@ import 'Validator.dart';
 
 class FormGroup {
   Map<String, FormControl> _controls = new Map<String, FormControl>();
-  void Function(dynamic data) _submitCallback;
+  Future Function(dynamic data) _submitCallback;
   // Stream<bool> get dirtyStream => _dirty.stream;
   StreamSubscription _controlsStatusSubscription;
-  BehaviorSubject<ControlStatus> _statusStream = BehaviorSubject<ControlStatus>.seeded(ControlStatus.valid);
+  final _statusStream = BehaviorSubject<ControlStatus>.seeded(ControlStatus.valid);
   Validator _validator;
   // FutureValidator _futureValidator;
 
@@ -20,9 +20,21 @@ class FormGroup {
   bool get invalid => _statusStream.value == ControlStatus.invalid;
   bool get pending => _statusStream.value == ControlStatus.pending;
 
-  BehaviorSubject<String> _errorStream = BehaviorSubject<String>.seeded('');
+  final _errorStream = BehaviorSubject<String>.seeded('');
   Stream<String> get error => _errorStream;
   String getError() => _errorStream.value;
+
+  final _submitting = BehaviorSubject<bool>.seeded(false);
+  Stream<bool> get submittingStream => _submitting;
+  bool get submitting => _submitting.value;
+  bool get submitEnabled => !submitting && valid;
+
+  Stream<bool> _submitEnabledStream;
+  Stream<bool> get submitEnabledStream => _submitEnabledStream;
+
+  FormGroup() {
+    _submitEnabledStream = Observable.combineLatest2(_statusStream, _submitting, (status, submitting) => status == ControlStatus.valid && !submitting);
+  }
 
 
   void add(FormControl control) {
@@ -142,17 +154,20 @@ class FormGroup {
   // }
 
   void submit() async {
-    if (_submitCallback == null) {
+    if (_submitCallback == null || _submitting.value) {
       return;
     }
+    _submitting.value = true;
     
     await validate();
     if (valid) {
-      _submitCallback(getValue());
+      await _submitCallback(getValue());
     }
+    
+    _submitting.value = false;
   }
 
-  void onSubmit(void Function(dynamic data) submitCallback) {
+  void onSubmit(Future Function(dynamic data) submitCallback) {
     _submitCallback = submitCallback;
   }
 
