@@ -9,6 +9,7 @@ class FormGroup {
   Map<String, FormControl> _controls = new Map<String, FormControl>();
   Future Function(dynamic data) _submitCallback;
   // Stream<bool> get dirtyStream => _dirty.stream;
+  StreamSubscription _submitEnabledSubscription;
   StreamSubscription _controlsStatusSubscription;
   final _statusStream = BehaviorSubject<ControlStatus>.seeded(ControlStatus.valid);
   Validator _validator;
@@ -27,13 +28,12 @@ class FormGroup {
   final _submitting = BehaviorSubject<bool>.seeded(false);
   Stream<bool> get submittingStream => _submitting;
   bool get submitting => _submitting.value;
-  bool get submitEnabled => !submitting && valid;
 
-  Stream<bool> _submitEnabledStream;
+  final _submitEnabledStream = BehaviorSubject<bool>.seeded(false);
   Stream<bool> get submitEnabledStream => _submitEnabledStream;
+  bool get submitEnabled => _submitEnabledStream.value;
 
   FormGroup() {
-    _submitEnabledStream = Observable.combineLatest2(_statusStream, _submitting, (status, submitting) => status == ControlStatus.valid && !submitting);
   }
 
 
@@ -79,6 +79,17 @@ class FormGroup {
           }
         }
       });
+
+    if (_submitEnabledSubscription != null) {
+      _submitEnabledSubscription.cancel();
+      _submitEnabledSubscription = null;
+    }
+    _submitEnabledSubscription = Observable.merge([_statusStream, _submitting]).listen((data) {
+      final newValue = status == ControlStatus.valid && !submitting;
+      if (_submitEnabledStream.value != newValue) {
+        _submitEnabledStream.value = newValue;
+      }
+    });
   }
 
   bool _hasError() {
@@ -175,6 +186,10 @@ class FormGroup {
     if (_controlsStatusSubscription != null) {
       _controlsStatusSubscription.cancel();
       _controlsStatusSubscription = null;
+    }
+    if (_submitEnabledSubscription != null) {
+      _submitEnabledSubscription.cancel();
+      _submitEnabledSubscription = null;
     }
     _controls.forEach((name, c) {
       c.dispose();
