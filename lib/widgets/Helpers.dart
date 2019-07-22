@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 
 class WidgetHelpers {
 
-  static List<Widget> mapToWidgetList(List<dynamic> items, Widget Function(dynamic item, int index) map) {
+  static List<T> mapToWidgetList<T extends Widget>(List<dynamic> items, T Function(dynamic item, int index) map) {
     List<Widget> result = [];
     for (var index = 0; index < items.length; index++) {
       result.add(map(items[index], index));
