@@ -182,7 +182,8 @@ class FormControl<T> {
     // second time for (blur) event or typing
     _touched = ++_changesCount > 1;
 
-    _setValue(_attachedController.text as Object, internalSet: true);
+    final Object val = _attachedController.text;
+    _setValue(val, internalSet: true);
   }
   
   void _setControllerValue() {
@@ -198,6 +199,8 @@ class FormControl<T> {
   void dispose() {
     if (_attachedController != null) {
       _attachedController.removeListener(_controllerValueChanged);
+      _attachedController.clear();
+      _attachedController.dispose();
     }
   }
 }

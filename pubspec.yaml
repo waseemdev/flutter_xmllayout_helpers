@@ -1,6 +1,6 @@
 name: flutter_xmllayout_helpers
 description: Helper widgets & classes for XML Layout extension for vscode
-version: 0.0.4
+version: 0.0.6
 author: WaseemDev <waseemdev7@gmail.com>
 homepage: https://github.com/waseemdev/flutter_xmllayout_helpers
 
@@ -10,8 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  provider: ^3.0.0+1
-  rxdart: ^0.22.0
+  provider: ">3.0.0+1 <4.0.0"
+  rxdart: ">0.22.0 <0.23.0"
 
 dev_dependencies:
   flutter_test:

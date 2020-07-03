@@ -33,8 +33,7 @@ class FormGroup {
   Stream<bool> get submitEnabledStream => _submitEnabledStream;
   bool get submitEnabled => _submitEnabledStream.value;
 
-  FormGroup() {
-  }
+  FormGroup();
 
 
   void add(FormControl control) {
@@ -49,6 +48,30 @@ class FormGroup {
     });
     _initStatusStream();
     validate();
+  }
+
+  void remove(String key) {
+    final control = _controls.remove(key);
+    if (control != null) {
+      _initStatusStream();
+      validate();
+      control.dispose();
+    }
+  }
+
+  void removeAll(List<String> keys) {
+    bool hasControls = false;
+    keys.forEach((key) {
+      final control = _controls.remove(key);
+      if (control != null) {
+        hasControls = true;
+        control.dispose();
+      }
+    });
+    if (hasControls) {
+      _initStatusStream();
+      validate();
+    }
   }
   
   void _initStatusStream() {
@@ -183,6 +206,9 @@ class FormGroup {
   }
 
   void dispose() {
+    _submitEnabledStream.close();
+    _submitting.close();
+    _errorStream.close();
     if (_controlsStatusSubscription != null) {
       _controlsStatusSubscription.cancel();
       _controlsStatusSubscription = null;

@@ -1,3 +1,6 @@
+## [0.0.6] - 3-7-2020.
+fix some bugs & update dependencies
+
 ## [0.0.3] - 22-7-2019.
 Make mapToWidgetList generic.
 

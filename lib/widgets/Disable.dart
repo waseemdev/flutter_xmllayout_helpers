@@ -1,7 +1,7 @@
-
 import 'package:flutter/widgets.dart';
 
-typedef DisableWidgetBuilder = Widget Function(BuildContext context, Function event);
+typedef DisableWidgetBuilder = Widget Function(
+    BuildContext context, Function event);
 
 class Disable extends StatelessWidget {
   final DisableWidgetBuilder builder;
@@ -11,6 +11,8 @@ class Disable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return builder != null ? builder(context, value == true ? null : event) : null;
+    return builder != null
+        ? builder(context, value == true ? null : event)
+        : null;
   }
 }

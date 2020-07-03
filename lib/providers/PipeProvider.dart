@@ -1,4 +1,3 @@
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter_xmllayout_helpers/pipes/PrecentPipes.dart';
 import '../pipes/Pipe.dart';
@@ -14,9 +13,8 @@ class PipeProvider {
     register(new WidthPercentPipe());
     register(new HeightPercentPipe());
   }
-  
 
-  void register(Pipe pipe, { String name }) {
+  void register(Pipe pipe, {String name}) {
     if (name == null || name.isEmpty) {
       name = pipe.name;
     }
@@ -25,7 +23,8 @@ class PipeProvider {
     }
   }
 
-  dynamic transform(BuildContext context, String name, dynamic value, List<dynamic> args) {
+  dynamic transform(
+      BuildContext context, String name, dynamic value, List<dynamic> args) {
     if (!_pipes.containsKey(name)) {
       throw new Exception('No such a pipe with name: "$name"');
     }

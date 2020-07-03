@@ -55,7 +55,6 @@ class AnimationBuilder extends StatefulWidget {
         super(
           key: key ?? UniqueKey(),
         );
-  
 
   final Widget child;
 
@@ -122,10 +121,12 @@ class AnimationBuilder extends StatefulWidget {
 
 class AnimationBuilderStateMixin {
   AnimationController get controller => null;
-  triggerAnimation({int cycles, int repeats, bool dispose = false, bool reset = false}) {}
+  triggerAnimation(
+      {int cycles, int repeats, bool dispose = false, bool reset = false}) {}
 }
 
-class AnimationBuilderState extends State<AnimationBuilder> with TickerProviderStateMixin, AnimationBuilderStateMixin {
+class AnimationBuilderState extends State<AnimationBuilder>
+    with TickerProviderStateMixin, AnimationBuilderStateMixin {
   AnimationController _controller;
   AnimationController get controller => _controller;
   Animation _animation;
@@ -146,18 +147,24 @@ class AnimationBuilderState extends State<AnimationBuilder> with TickerProviderS
   @override
   void initState() {
     _tween = widget.tween ?? Tween<double>(begin: 0, end: 1);
-    _initAnimation(dispose: false, trigger: widget.autoTrigger, cycles: widget.cycles, repeats: widget.repeats);
+    _initAnimation(
+        dispose: false,
+        trigger: widget.autoTrigger,
+        cycles: widget.cycles,
+        repeats: widget.repeats);
     super.initState();
   }
 
-  _initAnimation({ bool trigger = false, int cycles, int repeats, bool dispose = false }) {
+  _initAnimation(
+      {bool trigger = false, int cycles, int repeats, bool dispose = false}) {
     if (controller == null || _controllerIsDisposed) {
       _controller = AnimationController(duration: widget.duration, vsync: this);
     }
-    _animation = _tween.animate(CurvedAnimation(parent: controller, curve: widget.curve));
+    _animation = _tween
+        .animate(CurvedAnimation(parent: controller, curve: widget.curve));
 
     if (widget.tweenMap != null) {
-      _animationMap = { };
+      _animationMap = {};
       widget.tweenMap?.forEach((k, v) {
         final anim = CurvedAnimation(parent: controller, curve: widget.curve);
         _animationMap[k] = v.animate(anim);
@@ -175,8 +182,7 @@ class AnimationBuilderState extends State<AnimationBuilder> with TickerProviderS
     if (cycles != null) {
       _cycles = cycles;
       _addCycleStatusListener(cycles, dispose, _endAnimationListener);
-    }
-    else {
+    } else {
       _repeats = repeats ?? 1;
       _addRepeatStatusListener(_repeats, dispose, _endAnimationListener);
     }
@@ -187,12 +193,12 @@ class AnimationBuilderState extends State<AnimationBuilder> with TickerProviderS
   }
 
   /// Starts running this animation forwards (towards the end).
-  triggerAnimation({int cycles, int repeats, bool dispose = false, bool reset = false}) {
+  triggerAnimation(
+      {int cycles, int repeats, bool dispose = false, bool reset = false}) {
     _initAnimation(
         repeats: repeats ?? _repeats,
         cycles: cycles ?? _cycles,
-        dispose: dispose
-      );
+        dispose: dispose);
 
     if (reset && (cycles == null && _cycles == null)) {
       controller.reset();
@@ -200,17 +206,16 @@ class AnimationBuilderState extends State<AnimationBuilder> with TickerProviderS
 
     if (controller.isDismissed) {
       controller.forward();
-    }
-    else if (controller.isCompleted && (cycles != null || _cycles != null)) {
+    } else if (controller.isCompleted && (cycles != null || _cycles != null)) {
       controller.reverse();
-    }
-    else {
+    } else {
       controller.reset();
       controller.forward();
     }
   }
 
-  _addCycleStatusListener(int cycles, bool dispose, Function endAnimationListener) {
+  _addCycleStatusListener(
+      int cycles, bool dispose, Function endAnimationListener) {
     _animation.removeStatusListener(_repeatStatusListener);
     if (cycles == 0) {
       _repeatStatusListener = (AnimationStatus status) {
@@ -221,8 +226,7 @@ class AnimationBuilderState extends State<AnimationBuilder> with TickerProviderS
           controller.forward();
         }
       };
-    }
-    else {
+    } else {
       _repeatStatusListener = (AnimationStatus status) {
         if (status == AnimationStatus.completed) {
           cycles--;
@@ -261,7 +265,8 @@ class AnimationBuilderState extends State<AnimationBuilder> with TickerProviderS
     }
   }
 
-  _addRepeatStatusListener(int repeats, bool dispose, Function endAnimationListener) {
+  _addRepeatStatusListener(
+      int repeats, bool dispose, Function endAnimationListener) {
     _animation.removeStatusListener(_repeatStatusListener);
     if (repeats == 0) {
       _repeatStatusListener = (AnimationStatus status) {
@@ -270,8 +275,7 @@ class AnimationBuilderState extends State<AnimationBuilder> with TickerProviderS
           controller.forward();
         }
       };
-    }
-    else {
+    } else {
       _repeatStatusListener = (AnimationStatus status) {
         if (status == AnimationStatus.completed) {
           repeats--;
@@ -295,7 +299,7 @@ class AnimationBuilderState extends State<AnimationBuilder> with TickerProviderS
 
   @override
   void dispose() {
-      _animation.removeListener(_listener);
+    _animation.removeListener(_listener);
     _animation.removeStatusListener(_statusListener);
     controller.dispose();
     super.dispose();
@@ -309,8 +313,7 @@ class AnimationBuilderState extends State<AnimationBuilder> with TickerProviderS
       builder: (context, child) {
         if (widget.builder != null) {
           return widget.builder(_animation, child);
-        }
-        else {
+        } else {
           return widget.builderMap(_animationMap, child);
         }
       },
