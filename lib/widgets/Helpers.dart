@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 
 class WidgetHelpers {
-  static List<T> mapToWidgetList<T extends Widget>(
-      List<dynamic> items, T Function(dynamic item, int index) map) {
+  static List<T> mapToWidgetList<T extends Widget, D>(
+      Iterable<dynamic> items, T Function(D item, int index) map) {
     List<T> result = [];
     for (var index = 0; index < items.length; index++) {
-      result.add(map(items[index], index));
+      result.add(map(items.elementAt(index), index));
     }
     return result;
   }
@@ -20,7 +20,7 @@ class WidgetHelpers {
   }
 
   static Widget ifElseChain(
-      List<SwitchCase> ifElseChains, Widget Function() elseBuilder) {
+      Iterable<SwitchCase> ifElseChains, Widget Function() elseBuilder) {
     final trueItem = ifElseChains.firstWhere(
         (a) => a.value != null && a.value == true,
         orElse: () => null);
@@ -33,8 +33,8 @@ class WidgetHelpers {
   }
 
   static List<Widget> ifElseChainMultiChild(
-      List<SwitchCaseMultiChild> ifElseChains,
-      List<Widget> Function() elseBuilder) {
+      Iterable<SwitchCaseMultiChild> ifElseChains,
+      Iterable<Widget> Function() elseBuilder) {
     final trueItem = ifElseChains.firstWhere(
         (a) => a.value != null && a.value == true,
         orElse: () => null);
@@ -46,7 +46,7 @@ class WidgetHelpers {
   }
 
   static Widget switchValue(dynamic value,
-      Widget Function() defaultWidgetBuilder, List<SwitchCase> cases) {
+      Widget Function() defaultWidgetBuilder, Iterable<SwitchCase> cases) {
     final res = cases.firstWhere((a) => a.value == value, orElse: () => null);
     return res != null ? res.builder() : defaultWidgetBuilder;
   }
