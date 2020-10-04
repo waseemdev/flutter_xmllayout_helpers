@@ -158,6 +158,10 @@ class FormGroup {
     await Future.wait(_controls.map((n, c) => MapEntry(n, c.validate())).values);
   }
 
+  bool hasControl<T>(String name) {
+    return _controls.containsKey(name);
+  }
+
   FormControl<T> get<T>(String name) {
     if (!_controls.containsKey(name)) {
       throw Exception("FormControl with name: $name not found. don't forget to add it to the formGroup: formGroup.addControl(FormControl<Type>('$name', ''))");
