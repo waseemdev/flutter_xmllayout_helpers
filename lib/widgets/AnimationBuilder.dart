@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 class AnimationBuilder extends StatefulWidget {
   AnimationBuilder(
       {Key key,
+      this.controller,
+      this.animation,
       this.child,
       this.tween,
       this.duration,
@@ -57,6 +59,9 @@ class AnimationBuilder extends StatefulWidget {
         );
 
   final Widget child;
+
+  final AnimationController controller;
+  final Animation<double> animation;
 
   ///A linear interpolation between a beginning and ending value.
   ///
@@ -158,15 +163,15 @@ class AnimationBuilderState extends State<AnimationBuilder>
   _initAnimation(
       {bool trigger = false, int cycles, int repeats, bool dispose = false}) {
     if (controller == null || _controllerIsDisposed) {
-      _controller = AnimationController(duration: widget.duration, vsync: this);
+      _controller = widget.controller ?? AnimationController(duration: widget.duration, vsync: this);
     }
     _animation = _tween
-        .animate(CurvedAnimation(parent: controller, curve: widget.curve));
+        .animate(widget.animation ?? CurvedAnimation(parent: controller, curve: widget.curve));
 
     if (widget.tweenMap != null) {
       _animationMap = {};
       widget.tweenMap?.forEach((k, v) {
-        final anim = CurvedAnimation(parent: controller, curve: widget.curve);
+        final anim = widget.animation ?? CurvedAnimation(parent: controller, curve: widget.curve);
         _animationMap[k] = v.animate(anim);
       });
     }
