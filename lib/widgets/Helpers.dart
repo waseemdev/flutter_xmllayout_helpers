@@ -1,9 +1,9 @@
 import 'dart:io';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/widgets.dart';
 
 class WidgetHelpers {
-  static List<T> mapToWidgetList<T extends Widget, D>(
-      Iterable<dynamic> items, T Function(D item, int index) map) {
+  static List<T> mapToWidgetList<T extends Widget, D>(Iterable<dynamic> items, T Function(D item, int index) map) {
     List<T> result = [];
     for (var index = 0; index < items.length; index++) {
       result.add(map(items.elementAt(index), index));
@@ -11,44 +11,31 @@ class WidgetHelpers {
     return result;
   }
 
-  static Widget ifTrue(bool condition, Widget Function() trueWidget,
-      Widget Function() falseWidget) {
-    if (condition != null && condition) {
+  static Widget ifTrue(dynamic condition, Widget Function() trueWidget, Widget Function() falseWidget) {
+    if (condition != null && (condition as bool) == true) {
       return trueWidget();
     }
     return falseWidget();
   }
 
-  static Widget ifElseChain(
-      Iterable<SwitchCase> ifElseChains, Widget Function() elseBuilder) {
-    final trueItem = ifElseChains.firstWhere(
-        (a) => a.value != null && a.value == true,
-        orElse: () => null);
+  static Widget ifElseChain(Iterable<SwitchCase> ifElseChains, Widget Function()? elseBuilder) {
+    final trueItem = ifElseChains.firstWhereOrNull((a) => a.value != null && a.value == true);
     return trueItem != null
         ? trueItem.builder()
-        : (elseBuilder != null
-            ? elseBuilder()
-            : null // Container(height: 0, width: 0)
-            );
+        : (elseBuilder != null ? elseBuilder() : Container(height: 0, width: 0));
   }
 
   static List<Widget> ifElseChainMultiChild(
-      Iterable<SwitchCaseMultiChild> ifElseChains,
-      Iterable<Widget> Function() elseBuilder) {
-    final trueItem = ifElseChains.firstWhere(
-        (a) => a.value != null && a.value == true,
-        orElse: () => null);
+      Iterable<SwitchCaseMultiChild> ifElseChains, Iterable<Widget> Function()? elseBuilder) {
+    final trueItem = ifElseChains.firstWhereOrNull((a) => a.value != null && a.value == true);
     return trueItem != null
         ? trueItem.builder()
-        : (elseBuilder != null
-            ? elseBuilder()
-            : [/*Container(height: 0, width: 0)*/]);
+        : (elseBuilder != null ? elseBuilder() as List<Widget> : [/*Container(height: 0, width: 0)*/]);
   }
 
-  static Widget switchValue(dynamic value,
-      Widget Function() defaultWidgetBuilder, Iterable<SwitchCase> cases) {
-    final res = cases.firstWhere((a) => a.value == value, orElse: () => null);
-    return res != null ? res.builder() : defaultWidgetBuilder;
+  static Widget switchValue(dynamic value, Widget Function() defaultWidgetBuilder, Iterable<SwitchCase> cases) {
+    final res = cases.firstWhereOrNull((a) => a.value == value);
+    return res != null ? res.builder() : defaultWidgetBuilder as Widget;
   }
 
   static Widget when(String value, Widget widget, Widget defaultWidget) {
@@ -61,54 +48,53 @@ class WidgetHelpers {
         platform == 'mac' && Platform.isMacOS ||
         platform == 'linux' && Platform.isLinux;
 
-    if (platformResult &&
-        (version == null || version.isEmpty || version == Platform.version)) {
+    if (platformResult && (version == null || version.isEmpty || version == Platform.version)) {
       return widget;
     }
     return defaultWidget;
   }
 
   static dynamic onPlatformProperty(
-      {dynamic Function() ios,
-      dynamic Function() android,
-      dynamic Function() windows,
-      dynamic Function() mac,
-      dynamic Function() linux}) {
+      {dynamic Function()? ios,
+      dynamic Function()? android,
+      dynamic Function()? windows,
+      dynamic Function()? mac,
+      dynamic Function()? linux}) {
     if (Platform.isAndroid) {
-      return android();
+      return android!();
     } else if (Platform.isIOS) {
-      return ios();
+      return ios!();
     } else if (Platform.isAndroid) {
-      return android();
+      return android!();
     } else if (Platform.isWindows) {
-      return windows();
+      return windows!();
     } else if (Platform.isMacOS) {
-      return mac();
+      return mac!();
     } else if (Platform.isLinux) {
-      return linux();
+      return linux!();
     }
 
     return null;
   }
 
   static Widget onPlatformWidget(
-      {Widget Function() ios,
-      Widget Function() android,
-      Widget Function() windows,
-      Widget Function() mac,
-      Widget Function() linux}) {
+      {Widget Function()? ios,
+      Widget Function()? android,
+      Widget Function()? windows,
+      Widget Function()? mac,
+      Widget Function()? linux}) {
     if (Platform.isAndroid) {
-      return android();
+      return android!();
     } else if (Platform.isIOS) {
-      return ios();
+      return ios!();
     } else if (Platform.isAndroid) {
-      return android();
+      return android!();
     } else if (Platform.isWindows) {
-      return windows();
+      return windows!();
     } else if (Platform.isMacOS) {
-      return mac();
+      return mac!();
     } else if (Platform.isLinux) {
-      return linux();
+      return linux!();
     }
 
     return Container(width: 0, height: 0);
