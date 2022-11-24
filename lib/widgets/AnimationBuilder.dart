@@ -292,8 +292,14 @@ class AnimationBuilderState extends State<AnimationBuilder> with TickerProviderS
 
   @override
   void dispose() {
-    _animation!.removeListener(_listener!);
-    _animation!.removeStatusListener(_statusListener!);
+    if (_listener != null) {
+      _animation!.removeListener(_listener!);
+    }
+
+    if (_statusListener != null) {
+      _animation!.removeStatusListener(_statusListener!);
+    }
+
     controller!.dispose();
     super.dispose();
   }
