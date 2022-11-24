@@ -51,7 +51,7 @@ class AnimationBuilder extends StatefulWidget {
           }
           return true;
         }()),
-        repeats = repeats ?? 0,
+        repeats = repeats ?? 1,
         super(
           key: key ?? UniqueKey(),
         );
@@ -178,7 +178,7 @@ class AnimationBuilderState extends State<AnimationBuilder> with TickerProviderS
       _cycles = cycles;
       _addCycleStatusListener(cycles, dispose, _endAnimationListener);
     } else {
-      _repeats = repeats ?? 1;
+      _repeats = repeats;
       _addRepeatStatusListener(_repeats, dispose, _endAnimationListener);
     }
 
