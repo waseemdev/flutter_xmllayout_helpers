@@ -1,27 +1,27 @@
 typedef ValidateFn<T, V> = T Function(V value);
 
 abstract class Validator {
-  String validate(Object value) {
+  String? validate(Object? value) {
     return null;
   }
 }
 
 class FutureValidator {
-  ValidateFn<Future<String>, Object> _validateFn;
+  ValidateFn<Future<String>, Object?> _validateFn;
 
   FutureValidator(this._validateFn);
 
-  Future<String> validate(Object value) {
+  Future<String> validate(Object? value) {
     return _validateFn(value);
   }
 }
 
 class FnValidator extends Validator {
-  ValidateFn<String, Object> _validateFn;
+  ValidateFn<String?, Object?> _validateFn;
 
   FnValidator(this._validateFn);
 
-  String validate(Object value) {
+  String? validate(Object? value) {
     return _validateFn(value);
   }
 }

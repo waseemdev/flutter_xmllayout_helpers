@@ -5,13 +5,14 @@ author: WaseemDev <waseemdev7@gmail.com>
 homepage: https://github.com/waseemdev/flutter_xmllayout_helpers
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  provider: ">3.0.0+1 <4.0.0"
-  rxdart: ">0.22.0 <0.23.0"
+  provider: ^5.0.0
+  rxdart: ^0.27.7
+  collection: ^1.15.0-nullsafety.4
 
 dev_dependencies:
   flutter_test:

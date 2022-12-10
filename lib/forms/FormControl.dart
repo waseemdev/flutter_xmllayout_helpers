@@ -11,7 +11,7 @@ enum ControlStatus {
 }
 
 class FormControl<T> {
-  FormControl(String name, T value, {void Function(T value) changesListener, List<Validator> validators, List<FutureValidator> futureValidators}) {
+  FormControl(String name, T value, {void Function(T? value)? changesListener, List<Validator>? validators, List<FutureValidator>? futureValidators}) {
     _name = name;
     _setValue(_originalValue = _value = value);
     _changesListener = changesListener;
@@ -21,12 +21,12 @@ class FormControl<T> {
 
   int _changesCount = 0;
   bool _internalSet = false;
-  TextEditingController _attachedController;
-  List<Validator> _validators = [];
-  List<FutureValidator> _futureValidators = [];
+  TextEditingController? _attachedController;
+  List<Validator>? _validators = [];
+  List<FutureValidator>? _futureValidators = [];
   
-  BehaviorSubject<T> _valueStream = BehaviorSubject<T>();
-  Stream<T> get valueStream => _valueStream;
+  BehaviorSubject<T?> _valueStream = BehaviorSubject<T>();
+  Stream<T?> get valueStream => _valueStream;
 
   BehaviorSubject<bool> _dirtyStream = BehaviorSubject.seeded(false);
   Stream<bool> get dirtyStream => _dirtyStream;
@@ -41,32 +41,32 @@ class FormControl<T> {
   BehaviorSubject<List<String>> _errorsStream = BehaviorSubject<List<String>>.seeded([]);
   Stream<List<String>> get errors => _errorsStream;
   List<String> getErrors() => _errorsStream.value;
-  String get firstError => getErrors().length > 0 ? getErrors()[0] : null;
-  String get firstErrorIfTouched => _touched ? firstError : null;
+  String? get firstError => getErrors().length > 0 ? getErrors()[0] : null;
+  String? get firstErrorIfTouched => _touched ? firstError : null;
  
-  T _originalValue;
-  T _value;
-  T get value => _value;
-  set value(T value) => _setValue(value);
+  T? _originalValue;
+  T? _value;
+  T? get value => _value;
+  set value(T? value) => _setValue(value);
   // T getValue() => _value;
   // void setValue(T value) => _setValue(value);
 
-  String _name;
-  String get name => _name;
+  String? _name;
+  String? get name => _name;
   
   bool _touched = false;
   bool get touched => _touched;
 
-  void Function(T value) _changesListener;
+  void Function(T? value)? _changesListener;
   
-  setValidators(List<Validator> validators) {
+  setValidators(List<Validator>? validators) {
     _validators = validators;
     if (_validators == null) {
       _validators = [];
     }
   }
   
-  setFutureValidators(List<FutureValidator> futureValidators) {
+  setFutureValidators(List<FutureValidator>? futureValidators) {
     _futureValidators = futureValidators;
     if (_futureValidators == null) {
       _futureValidators = [];
@@ -78,7 +78,7 @@ class FormControl<T> {
 
     List<String> errors = [];
 
-    _validators.forEach((f) {
+    _validators!.forEach((f) {
       var error = f.validate(_value);
       if (error != null && error.isNotEmpty) {
         errors.add(error);
@@ -93,10 +93,10 @@ class FormControl<T> {
     if (hasErrors) {
       _statusStream.add(ControlStatus.invalid);
     }
-    else if (_futureValidators.length > 0) {
+    else if (_futureValidators!.length > 0) {
 
       var futures = <Future<String>>[];
-      _futureValidators.forEach((f) {
+      _futureValidators!.forEach((f) {
         futures.add(f.validate(_value));
       });
 
@@ -113,7 +113,7 @@ class FormControl<T> {
       // });
 
       final errors = await Future.wait(futures);
-      _errorsStream.add(errors.where((error) => error != null && error.isNotEmpty));
+      _errorsStream.add(errors.where((error) => error != null && error.isNotEmpty) as List<String>);
       // update valid status
       var hasErrors = _errorsStream.value.length > 0;
       if (hasErrors) {
@@ -129,7 +129,7 @@ class FormControl<T> {
     }
   }
 
-  void _setValue(T value, {bool internalSet = false, bool markAsDirty = true}) {
+  void _setValue(T? value, {bool internalSet = false, bool markAsDirty = true}) {
     if (markAsDirty && value != _value && !_dirtyStream.value) {
       _dirtyStream.value = true;
     }
@@ -146,11 +146,11 @@ class FormControl<T> {
     validate();
 
     if (_changesListener != null) {
-      _changesListener(value);
+      _changesListener!(value);
     }
   }
 
-  void reset(T value) {
+  void reset(T? value) {
     _originalValue = value;
     _dirtyStream.add(false);
     _setValue(value, internalSet: true, markAsDirty: false);
@@ -166,7 +166,7 @@ class FormControl<T> {
 
   void attachTextEditingController(TextEditingController controller) {
     _attachedController = controller;
-    _attachedController.addListener(_controllerValueChanged);
+    _attachedController!.addListener(_controllerValueChanged);
 
     if (_value != null) {
       _setControllerValue();
@@ -182,8 +182,8 @@ class FormControl<T> {
     // second time for (blur) event or typing
     _touched = ++_changesCount > 1;
 
-    final Object val = _attachedController.text;
-    _setValue(val, internalSet: true);
+    final Object val = _attachedController!.text;
+    _setValue(val as T?, internalSet: true);
   }
   
   void _setControllerValue() {
@@ -192,15 +192,15 @@ class FormControl<T> {
     }
 
     _internalSet = true;
-    _attachedController.text = _value.toString();
+    _attachedController!.text = _value.toString();
     _internalSet = false;
   }
 
   void dispose() {
     if (_attachedController != null) {
-      _attachedController.removeListener(_controllerValueChanged);
-      _attachedController.clear();
-      _attachedController.dispose();
+      _attachedController!.removeListener(_controllerValueChanged);
+      _attachedController!.clear();
+      _attachedController!.dispose();
     }
   }
 }

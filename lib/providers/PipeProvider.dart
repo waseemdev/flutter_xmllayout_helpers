@@ -14,7 +14,7 @@ class PipeProvider {
     register(new HeightPercentPipe());
   }
 
-  void register(Pipe pipe, {String name}) {
+  void register(Pipe pipe, {String? name}) {
     if (name == null || name.isEmpty) {
       name = pipe.name;
     }
@@ -29,6 +29,6 @@ class PipeProvider {
       throw new Exception('No such a pipe with name: "$name"');
     }
 
-    return _pipes[name].transform(context, value, args);
+    return _pipes[name]!.transform(context, value, args);
   }
 }
